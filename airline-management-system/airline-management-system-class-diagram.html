@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Management System — Class Diagram</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1f2937;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --blue: #58a6ff;
+            --green: #3fb950;
+            --purple: #d2a8ff;
+            --orange: #ffa657;
+            --yellow: #e3b341;
+            --red: #f85149;
+            --cyan: #39d353;
+            --teal: #76e3ea;
+            --pink: #f778ba;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1f2937 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 48px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.08) 0%, transparent 70%);
+        }
+        .hero-icon { font-size: 56px; display: block; margin-bottom: 16px; }
+        .hero h1 { font-size: 2.2rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .hero p { color: var(--text-muted); font-size: 1rem; margin-bottom: 24px; }
+        .hero-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+        .hero-tag {
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.3);
+            color: var(--blue);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+
+        /* LEGEND */
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px 40px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .legend-dot {
+            width: 12px; height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* MAIN CANVAS */
+        .canvas {
+            padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* SECTION LABEL */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 40px 0 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+        .section-label::before, .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* CLASS GRID */
+        .class-grid {
+            display: grid;
+            gap: 16px;
+        }
+        .cols-2 { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+        .cols-3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+        .cols-4 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+        /* CLASS CARD */
+        .class-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .class-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        /* card color variants via border-top */
+        .card-model    { border-top: 3px solid var(--blue); }
+        .card-service  { border-top: 3px solid var(--green); }
+        .card-repo     { border-top: 3px solid var(--purple); }
+        .card-strategy { border-top: 3px solid var(--orange); }
+        .card-factory  { border-top: 3px solid var(--yellow); }
+        .card-enum     { border-top: 3px solid var(--teal); }
+        .card-concurrency { border-top: 3px solid var(--red); }
+
+        /* CLASS HEADER */
+        .class-header {
+            padding: 12px 16px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .class-stereotype {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 2px;
+            font-family: monospace;
+        }
+        .class-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        .class-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        /* CLASS BODY */
+        .class-body { padding: 8px 0; }
+
+        .section-divider {
+            padding: 4px 16px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.02);
+            margin: 4px 0;
+        }
+
+        .class-field, .class-method, .class-enum-val {
+            padding: 2px 16px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.73rem;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .class-field  { color: var(--orange); }
+        .class-method { color: var(--green); }
+        .class-enum-val { color: var(--teal); }
+
+        .vis { color: var(--text-muted); flex-shrink: 0; }
+
+        /* RELATIONSHIP ROW */
+        .rel-type {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            font-family: monospace;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .rel-comp   { background: rgba(88,166,255,0.15); color: var(--blue); }
+        .rel-agg    { background: rgba(63,185,80,0.15);  color: var(--green); }
+        .rel-assoc  { background: rgba(210,168,255,0.15);color: var(--purple); }
+        .rel-impl   { background: rgba(255,166,87,0.15); color: var(--orange); }
+        .rel-ext    { background: rgba(118,227,234,0.15);color: var(--teal); }
+        .rel-dep    { background: rgba(248,81,73,0.15);  color: var(--red); }
+
+        /* CONCURRENCY BADGE */
+        .concurrency-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(248,81,73,0.12);
+            border: 1px solid rgba(248,81,73,0.3);
+            color: var(--red);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin: 6px 16px 4px;
+        }
+
+        /* CONCURRENCY DETAIL BOX */
+        .concurrency-box {
+            margin: 4px 16px 8px;
+            background: rgba(248,81,73,0.05);
+            border: 1px solid rgba(248,81,73,0.2);
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+        .concurrency-box .cb-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .concurrency-box .cb-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: 0.71rem;
+            color: #ffb3ae;
+            line-height: 1.5;
+            margin-bottom: 3px;
+        }
+        .cb-icon { flex-shrink: 0; }
+
+        /* RELATIONSHIP TABLE */
+        .rel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 0.78rem;
+        }
+        .rel-table th {
+            background: var(--surface2);
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .rel-table td {
+            padding: 9px 16px;
+            border-bottom: 1px solid rgba(48,54,61,0.5);
+            color: var(--text);
+            font-family: monospace;
+            vertical-align: middle;
+        }
+        .rel-table tr:last-child td { border-bottom: none; }
+        .rel-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .arrow-sym {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* RELATIONSHIP SECTION WRAPPER */
+        .rel-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .rel-section-header {
+            padding: 14px 20px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 32px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .canvas { padding: 20px 16px; }
+            .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.5rem; }
+            .legend { gap: 12px; padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <span class="hero-icon">✈️</span>
+    <h1>Airline Management System</h1>
+    <p>Complete Class Diagram with Relationships & Concurrency Details</p>
+    <div class="hero-tags">
+        <span class="hero-tag">☕ Java 17+</span>
+        <span class="hero-tag">🏗️ LLD</span>
+        <span class="hero-tag">🔒 Concurrency Safe</span>
+        <span class="hero-tag">🎨 Design Patterns</span>
+        <span class="hero-tag">📦 19 Classes</span>
+        <span class="hero-tag">🔢 8 Enums</span>
+    </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#58a6ff;"></div> Domain Model
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#3fb950;"></div> Service
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#d2a8ff;"></div> Repository
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#ffa657;"></div> Strategy
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#e3b341;"></div> Factory
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#76e3ea;"></div> Enum
+    </div>
+    <div class="legend-item">
+        <div class="legend-dot" style="background:#f85149;"></div> Concurrency-Critical
+    </div>
+    <div class="legend-item">
+        <span style="font-size:0.75rem; color:#58a6ff; font-family:monospace;">◆</span>&nbsp;Composition
+    </div>
+    <div class="legend-item">
+        <span style="font-size:0.75rem; color:#3fb950; font-family:monospace;">◇</span>&nbsp;Aggregation
+    </div>
+    <div class="legend-item">
+        <span style="font-size:0.75rem; color:#d2a8ff; font-family:monospace;">→</span>&nbsp;Association
+    </div>
+    <div class="legend-item">
+        <span style="font-size:0.75rem; color:#ffa657; font-family:monospace;">⇢</span>&nbsp;Implements
+    </div>
+    <div class="legend-item">
+        <span style="font-size:0.75rem; color:#76e3ea; font-family:monospace;">↑</span>&nbsp;Extends
+    </div>
+</div>
+
+<div class="canvas">
+
+    <!-- ═══════════════════ DOMAIN MODELS ═══════════════════ -->
+    <div class="section-label">📦 Domain Models</div>
+    <div class="class-grid cols-2">
+
+        <!-- Flight -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Flight</div>
+                <div class="class-desc">Central entity representing a scheduled air journey from source to destination with aircraft, crew, and seats.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> flightId : String</div>
+                <div class="class-field"><span class="vis">-</span> route : Route <span class="rel-type rel-comp">◆ composition</span></div>
+                <div class="class-field"><span class="vis">-</span> schedule : Schedule <span class="rel-type rel-comp">◆ composition</span></div>
+                <div class="class-field"><span class="vis">-</span> aircraft : Aircraft <span class="rel-type rel-agg">◇ aggregation</span></div>
+                <div class="class-field"><span class="vis">-</span> seats : Map&lt;String, Seat&gt; <span class="rel-type rel-comp">◆ composition</span></div>
+                <div class="class-field"><span class="vis">-</span> crew : List&lt;Crew&gt; <span class="rel-type rel-agg">◇ aggregation</span></div>
+                <div class="class-field"><span class="vis">-</span> status : FlightStatus</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> getters() / setters()</div>
+            </div>
+        </div>
+
+        <!-- Booking -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Booking</div>
+                <div class="class-desc">Represents a passenger's reservation — ties together flight, passengers, seats, and payment into one lifecycle unit.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> bookingId : String</div>
+                <div class="class-field"><span class="vis">-</span> flight : Flight <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> passengers : List&lt;Passenger&gt; <span class="rel-type rel-agg">◇ aggregation</span></div>
+                <div class="class-field"><span class="vis">-</span> seats : List&lt;Seat&gt; <span class="rel-type rel-agg">◇ aggregation</span></div>
+                <div class="class-field"><span class="vis">-</span> bookingAmount : double</div>
+                <div class="class-field"><span class="vis">-</span> payment : Payment <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> status : BookingStatus</div>
+                <div class="class-field"><span class="vis">-</span> passengerSeatMap : Map&lt;String,String&gt;</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> constructor(bookingId, flight, passengers, seats, amount)</div>
+            </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Payment</div>
+                <div class="class-desc">Tracks a financial transaction — enforces state transitions via dedicated methods instead of raw field mutation.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> paymentId : String</div>
+                <div class="class-field"><span class="vis">-</span> amount : double</div>
+                <div class="class-field"><span class="vis">-</span> status : PaymentStatus</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> markSuccess()</div>
+                <div class="class-method"><span class="vis">+</span> markFailed()</div>
+                <div class="class-method"><span class="vis">+</span> markRefunded()</div>
+            </div>
+        </div>
+
+        <!-- SeatInventory — CONCURRENCY CRITICAL -->
+        <div class="class-card card-concurrency">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--red);">SeatInventory</div>
+                <div class="class-desc">Tracks real-time availability of each seat on a flight — the source of truth for seat state and the primary concurrency battleground.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> inventoryId : String</div>
+                <div class="class-field"><span class="vis">-</span> flightId : String</div>
+                <div class="class-field"><span class="vis">-</span> seatNumber : String</div>
+                <div class="class-field"><span class="vis">-</span> seatClass : SeatClass</div>
+                <div class="class-field"><span class="vis">-</span> status : SeatStatus</div>
+                <div class="class-field"><span class="vis">-</span> bookingId : String</div>
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> version : int &nbsp;⚡ optimistic lock</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> getters() / setters()</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">⚡</span> <b>Optimistic Locking:</b> The <code>version</code> field is incremented on every state change (AVAILABLE→LOCKED→BOOKED). Any stale write is detected and rejected before persisting.</div>
+                    <div class="cb-item"><span class="cb-icon">🗂️</span> <b>ConcurrentHashMap:</b> The repository backing this model uses <code>ConcurrentHashMap</code> ensuring thread-safe reads and writes at map level.</div>
+                    <div class="cb-item"><span class="cb-icon">🔑</span> <b>Composite Key:</b> Stored under key <code>flightId:seatNumber</code> enabling atomic per-seat operations without locking unrelated seats.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SeatLock — CONCURRENCY CRITICAL -->
+        <div class="class-card card-concurrency">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--red);">SeatLock</div>
+                <div class="class-desc">Represents a temporary exclusive hold on a seat during the booking initiation window — prevents double booking while payment is in progress.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> flightId : String</div>
+                <div class="class-field"><span class="vis">-</span> seatNumber : String</div>
+                <div class="class-field"><span class="vis">-</span> bookingId : String</div>
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> expiresAt : LocalDateTime &nbsp;⚡ TTL</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> isExpired() : boolean</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">⏱️</span> <b>TTL-based expiry:</b> <code>expiresAt</code> is set to <code>now + 5 minutes</code>. <code>isExpired()</code> provides a fast O(1) check before any lock decision.</div>
+                    <div class="cb-item"><span class="cb-icon">⚛️</span> <b>Atomic acquisition:</b> Lock is acquired via <code>ConcurrentHashMap.compute()</code> — the check-and-set is a single atomic operation, eliminating the TOCTOU race condition.</div>
+                    <div class="cb-item"><span class="cb-icon">🧹</span> <b>Auto-cleanup:</b> <code>SeatLockExpiryService</code> runs every 60s to remove expired locks and reset seats to AVAILABLE.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Passenger -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Passenger</div>
+                <div class="class-desc">Represents a traveller with identity details — passport is mandatory and used as a unique identity document.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> passengerId : String</div>
+                <div class="class-field"><span class="vis">-</span> name : String</div>
+                <div class="class-field"><span class="vis">-</span> passport : String &nbsp;<span style="color:var(--red);font-size:0.65rem;">[mandatory]</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> getters()</div>
+            </div>
+        </div>
+
+        <!-- Baggage -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Baggage</div>
+                <div class="class-desc">Stores luggage details for a specific passenger on a specific flight — count and weight for check-in processing.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> count : int</div>
+                <div class="class-field"><span class="vis">-</span> weight : double</div>
+                <div class="class-field"><span class="vis">-</span> passengerId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> flightId : String <span class="rel-type rel-assoc">→ association</span></div>
+            </div>
+        </div>
+
+        <!-- BoardingPass -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">BoardingPass</div>
+                <div class="class-desc">Generated post-confirmation — gives a passenger gate access with seat assignment and boarding time printed.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> boardingPassId : String</div>
+                <div class="class-field"><span class="vis">-</span> bookingId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> passengerId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> flightId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> seatNumber : String</div>
+                <div class="class-field"><span class="vis">-</span> gate : String</div>
+                <div class="class-field"><span class="vis">-</span> boardingTime : LocalDateTime</div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Notification</div>
+                <div class="class-desc">Records an event-triggered message sent to a passenger — supports all booking, payment, and flight lifecycle events.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> notificationId : String</div>
+                <div class="class-field"><span class="vis">-</span> recipientId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> type : NotificationType</div>
+                <div class="class-field"><span class="vis">-</span> message : String</div>
+                <div class="class-field"><span class="vis">-</span> createdAt : LocalDateTime</div>
+            </div>
+        </div>
+
+        <!-- FlightPrice -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">FlightPrice</div>
+                <div class="class-desc">Defines the base fare for a specific seat class on a specific flight — returned alongside search results.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> id : String</div>
+                <div class="class-field"><span class="vis">-</span> flightId : String <span class="rel-type rel-assoc">→ association</span></div>
+                <div class="class-field"><span class="vis">-</span> seatClass : SeatClass</div>
+                <div class="class-field"><span class="vis">-</span> baseFare : double</div>
+            </div>
+        </div>
+
+        <!-- FlightWithFlightPrice -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">FlightWithFlightPrice</div>
+                <div class="class-desc">A query result wrapper combining flight data with its full pricing list — returned from search to avoid polluting domain models.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> flight : Flight <span class="rel-type rel-comp">◆ composition</span></div>
+                <div class="class-field"><span class="vis">-</span> price : List&lt;FlightPrice&gt; <span class="rel-type rel-comp">◆ composition</span></div>
+            </div>
+        </div>
+
+        <!-- Aircraft -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Aircraft</div>
+                <div class="class-desc">Represents a physical airplane with a model and seating capacity — assigned to a flight by an admin.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> aircraftId : String</div>
+                <div class="class-field"><span class="vis">-</span> model : String</div>
+                <div class="class-field"><span class="vis">-</span> capacity : int</div>
+            </div>
+        </div>
+
+        <!-- Crew -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Crew</div>
+                <div class="class-desc">Identifies a crew member by ID and role — assigned as a list to a flight for operational compliance.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> crewId : String</div>
+                <div class="class-field"><span class="vis">-</span> role : CrewRole</div>
+            </div>
+        </div>
+
+        <!-- Route -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Route</div>
+                <div class="class-desc">Defines a directional path between two airports — source and destination are immutable once set.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> source : Airport <span class="rel-type rel-comp">◆ composition</span></div>
+                <div class="class-field"><span class="vis">-</span> destination : Airport <span class="rel-type rel-comp">◆ composition</span></div>
+            </div>
+        </div>
+
+        <!-- Airport -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Airport</div>
+                <div class="class-desc">A physical airport identified by IATA code — used in route definitions and case-insensitive flight search.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> code : String &nbsp;<span style="color:var(--text-muted);font-size:0.65rem;">[IATA]</span></div>
+                <div class="class-field"><span class="vis">-</span> name : String</div>
+                <div class="class-field"><span class="vis">-</span> city : String</div>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Schedule</div>
+                <div class="class-desc">Holds the departure and arrival datetimes for a flight — used in search filtering and refund policy calculation.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> departure : LocalDateTime</div>
+                <div class="class-field"><span class="vis">-</span> arrival : LocalDateTime</div>
+            </div>
+        </div>
+
+        <!-- Seat -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Seat</div>
+                <div class="class-desc">Defines a physical seat position and its class on an aircraft — status is tracked separately in SeatInventory.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> seatNumber : String</div>
+                <div class="class-field"><span class="vis">-</span> seatClass : SeatClass</div>
+            </div>
+        </div>
+
+        <!-- Refund -->
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">Refund</div>
+                <div class="class-desc">Records a refund transaction associated with a cancelled booking — amount is calculated by RefundPolicy.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> refundId : String</div>
+                <div class="class-field"><span class="vis">-</span> amount : double</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ USER HIERARCHY ═══════════════════ -->
+    <div class="section-label">👤 User Hierarchy</div>
+    <div class="class-grid cols-3">
+
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--blue);">User</div>
+                <div class="class-desc">Base class for all system actors — carries identity and role type used for access differentiation.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> username : String</div>
+                <div class="class-field"><span class="vis">-</span> userRole : UserRole</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> getters()</div>
+            </div>
+        </div>
+
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-stereotype">extends User</div>
+                <div class="class-name" style="color:var(--teal);">AdminUser</div>
+                <div class="class-desc">System administrator — can assign aircraft, crew, and update flight status. Role defaults to ADMIN.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">↑</span> inherits username, userRole</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> AdminUser(username)</div>
+            </div>
+        </div>
+
+        <div class="class-card card-model">
+            <div class="class-header">
+                <div class="class-stereotype">extends User</div>
+                <div class="class-name" style="color:var(--teal);">AirlineStaff</div>
+                <div class="class-desc">Airline operational staff — belongs to a department and manages flight-level operations. Role defaults to STAFF.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">↑</span> inherits username, userRole</div>
+                <div class="class-field"><span class="vis">-</span> department : String</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> getters()</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ SERVICES ═══════════════════ -->
+    <div class="section-label">⚙️ Services</div>
+    <div class="class-grid cols-2">
+
+        <!-- BookingService — CONCURRENCY CRITICAL -->
+        <div class="class-card card-concurrency">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → BookingServiceImpl</div>
+                <div class="class-name" style="color:var(--red);">BookingService</div>
+                <div class="class-desc">Orchestrates the full booking lifecycle — initiation, confirmation, and cancellation with seat lock management.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> flightRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> bookingRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> paymentRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> seatInventoryRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> refundService <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> seatAllocationStrategy <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> notificationService <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> seatLockObjects : ConcurrentHashMap&lt;String,Object&gt; ⚡</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> initiateBooking(flightId, price, seats, passengers)</div>
+                <div class="class-method"><span class="vis">+</span> completeBooking(bookingId, paymentId)</div>
+                <div class="class-method"><span class="vis">+</span> cancelBooking(bookingId)</div>
+                <div class="class-method"><span class="vis">-</span> getSeatLock(flightId, seatNumber) : Object</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">🔑</span> <b>Per-seat locking:</b> A <code>ConcurrentHashMap&lt;String,Object&gt;</code> stores one lock object per <code>flightId:seatNumber</code> key. Only the thread booking a specific seat is blocked — other seats on the same flight proceed in parallel.</div>
+                    <div class="cb-item"><span class="cb-icon">🔄</span> <b>Rollback on partial failure:</b> If seat N locks successfully but seat N+1 fails, a catch block iterates all previously locked seats and calls <code>unlockSeat()</code> atomically — no ghost locks are left behind.</div>
+                    <div class="cb-item"><span class="cb-icon">✅</span> <b>State validation:</b> Guards check <code>BookingStatus</code> before every transition — e.g., cannot confirm a CANCELLED booking, cannot cancel an already-CANCELLED booking.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SeatInventoryService — CONCURRENCY CRITICAL -->
+        <div class="class-card card-concurrency">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → SeatInventoryServiceImpl</div>
+                <div class="class-name" style="color:var(--red);">SeatInventoryService</div>
+                <div class="class-desc">Manages per-seat state transitions with an in-memory lock map and ownership validation for safe concurrent access.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> repository : SeatInventoryRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> locks : ConcurrentHashMap&lt;String, SeatLock&gt; ⚡</div>
+                <div class="class-field"><span class="vis">-</span> LOCK_DURATION_MINUTES = 5</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> lockSeat(flightId, seatNumber, bookingId)</div>
+                <div class="class-method"><span class="vis">+</span> confirmSeat(flightId, seatNumber, bookingId)</div>
+                <div class="class-method"><span class="vis">+</span> releaseSeat(flightId, seatNumber)</div>
+                <div class="class-method"><span class="vis">+</span> acquireLock(flightId, seatNumber, bookingId)</div>
+                <div class="class-method"><span class="vis">+</span> releaseLock(flightId, seatNumber)</div>
+                <div class="class-method"><span class="vis">+</span> validateLockOwner(flightId, seatNumber, bookingId)</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">⚛️</span> <b>Atomic lock acquisition:</b> <code>acquireLock()</code> uses <code>ConcurrentHashMap.compute()</code> — the entire check-existing + insert-new sequence is one atomic operation, eliminating the classic TOCTOU race condition.</div>
+                    <div class="cb-item"><span class="cb-icon">👤</span> <b>Ownership validation:</b> <code>validateLockOwner()</code> verifies the <code>bookingId</code> on the lock matches the caller before allowing confirmation — prevents one booking from stealing another's seat.</div>
+                    <div class="cb-item"><span class="cb-icon">⏱️</span> <b>Expiry awareness:</b> Every lock operation checks <code>SeatLock.isExpired()</code> first — expired locks are treated as non-existent, allowing new acquisitions.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PaymentService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → PaymentServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">PaymentService</div>
+                <div class="class-desc">Processes payments via a factory-selected gateway and persists all outcomes — success or failure — for audit.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> paymentRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> processPayment(amount, provider) : Payment</div>
+                <div class="class-method"><span class="vis">+</span> refund(payment)</div>
+            </div>
+        </div>
+
+        <!-- RefundService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → RefundServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">RefundService</div>
+                <div class="class-desc">Calculates refund amount via injected RefundPolicy and delegates the actual transaction to PaymentService.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> paymentService <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> refundPolicy : RefundPolicy <span class="rel-type rel-dep">depends</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> processRefund(booking)</div>
+            </div>
+        </div>
+
+        <!-- FlightSearchService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → FlightSearchServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">FlightSearchService</div>
+                <div class="class-desc">Searches flights by route and date, then enriches each result with class-level pricing from FlightPriceRepository.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> flightRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> flightPriceRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> searchFlights(source, destination, date)</div>
+            </div>
+        </div>
+
+        <!-- NotificationService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → NotificationServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">NotificationService</div>
+                <div class="class-desc">Sends and stores event-triggered notifications to passengers — extensible to email, SMS, or push in future.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields (Impl)</div>
+                <div class="class-field"><span class="vis">-</span> store : ConcurrentHashMap&lt;String, List&lt;Notification&gt;&gt;</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> notify(recipientId, type, message)</div>
+                <div class="class-method"><span class="vis">+</span> getNotifications(recipientId)</div>
+            </div>
+        </div>
+
+        <!-- BoardingPassService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → BoardingPassServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">BoardingPassService</div>
+                <div class="class-desc">Generates one boarding pass per passenger in a booking — sets gate and boarding time 45 minutes before departure.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> generateBoardingPasses(booking) : List&lt;BoardingPass&gt;</div>
+                <div class="class-method"><span class="vis">+</span> getBoardingPass(passengerId, flightId) : BoardingPass</div>
+            </div>
+        </div>
+
+        <!-- FlightStatusService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → FlightStatusServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">FlightStatusService</div>
+                <div class="class-desc">Allows administrators to transition a flight through its status lifecycle — SCHEDULED through to ARRIVED or CANCELLED.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> flightRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> updateStatus(flightId, status)</div>
+                <div class="class-method"><span class="vis">+</span> getStatus(flightId) : FlightStatus</div>
+            </div>
+        </div>
+
+        <!-- AircraftAssignmentService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → AircraftAssignmentServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">AircraftAssignmentService</div>
+                <div class="class-desc">Assigns a specific aircraft to a flight — sets the aircraft reference on the flight object.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> assignAircraft(flight, aircraft)</div>
+            </div>
+        </div>
+
+        <!-- CrewAssignmentService -->
+        <div class="class-card card-service">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → CrewAssignmentServiceImpl</div>
+                <div class="class-name" style="color:var(--green);">CrewAssignmentService</div>
+                <div class="class-desc">Assigns a list of crew members to a flight — sets pilot, copilot, and cabin crew for the journey.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> assignCrew(flight, crew)</div>
+            </div>
+        </div>
+
+        <!-- SeatLockExpiryService — CONCURRENCY CRITICAL -->
+        <div class="class-card card-concurrency">
+            <div class="class-header">
+                <div class="class-name" style="color:var(--red);">SeatLockExpiryService</div>
+                <div class="class-desc">Background scheduler that runs every 60 seconds to detect and release expired seat locks — prevents ghost locks from blocking seats indefinitely.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Fields</div>
+                <div class="class-field"><span class="vis">-</span> locks : Map&lt;String, SeatLock&gt; <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field"><span class="vis">-</span> repository : SeatInventoryRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> scheduler : ScheduledExecutorService ⚡</div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> start()</div>
+                <div class="class-method"><span class="vis">+</span> stop()</div>
+                <div class="class-method"><span class="vis">-</span> releaseExpiredLocks()</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">⏰</span> <b>Scheduled executor:</b> Uses <code>Executors.newSingleThreadScheduledExecutor()</code> with <code>scheduleAtFixedRate()</code> — runs cleanup every 60 seconds in a dedicated background thread.</div>
+                    <div class="cb-item"><span class="cb-icon">🧹</span> <b>Atomic removal:</b> Uses <code>ConcurrentHashMap.entrySet().removeIf()</code> — the predicate check + removal is atomic per entry, safe for concurrent lock map access.</div>
+                    <div class="cb-item"><span class="cb-icon">🔓</span> <b>Safe seat reset:</b> Only resets seats in <code>LOCKED</code> state (not <code>BOOKED</code>) — prevents accidental freeing of confirmed reservations.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ REPOSITORIES ═══════════════════ -->
+    <div class="section-label">🗄️ Repositories</div>
+    <div class="class-grid cols-3">
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemoryFlightRepository</div>
+                <div class="class-name" style="color:var(--purple);">FlightRepository</div>
+                <div class="class-desc">Stores and retrieves flights — supports full-scan search by source, destination, and date with case-insensitive matching.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> flights : ConcurrentHashMap&lt;String, Flight&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(Flight)</div>
+                <div class="class-method"><span class="vis">+</span> findById(String) : Optional&lt;Flight&gt;</div>
+                <div class="class-method"><span class="vis">+</span> search(src, dst, date) : List&lt;Flight&gt;</div>
+                <div class="class-method"><span class="vis">+</span> findAll() : List&lt;Flight&gt;</div>
+            </div>
+        </div>
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemoryBookingRepository</div>
+                <div class="class-name" style="color:var(--purple);">BookingRepository</div>
+                <div class="class-desc">Stores booking records keyed by bookingId — supports full listing for admin and lookup by ID for confirmation/cancellation.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> bookings : ConcurrentHashMap&lt;String, Booking&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(Booking)</div>
+                <div class="class-method"><span class="vis">+</span> findById(String) : Optional&lt;Booking&gt;</div>
+                <div class="class-method"><span class="vis">+</span> findAll() : List&lt;Booking&gt;</div>
+            </div>
+        </div>
+
+        <div class="class-card card-concurrency" style="border-top-color: var(--red);">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemorySeatInventoryRepository</div>
+                <div class="class-name" style="color:var(--red);">SeatInventoryRepository</div>
+                <div class="class-desc">Stores seat inventory records under composite key flightId:seatNumber — critical store for concurrent seat booking operations.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field" style="color:var(--red);"><span class="vis">-</span> storage : ConcurrentHashMap&lt;String, SeatInventory&gt; ⚡</div>
+                <div class="class-method"><span class="vis">+</span> save(SeatInventory)</div>
+                <div class="class-method"><span class="vis">+</span> findByFlightAndSeat(flightId, seatNumber)</div>
+                <div class="class-method"><span class="vis">+</span> findByFlight(flightId) : List</div>
+                <div class="class-method"><span class="vis">+</span> findAvailableSeats(flightId) : List</div>
+                <div class="concurrency-badge">🔒 CONCURRENCY CRITICAL</div>
+                <div class="concurrency-box">
+                    <div class="cb-title">How Concurrency is Handled</div>
+                    <div class="cb-item"><span class="cb-icon">🗺️</span> <b>ConcurrentHashMap:</b> All reads and writes are thread-safe at the map level — no explicit locking required for individual get/put operations.</div>
+                    <div class="cb-item"><span class="cb-icon">🔑</span> <b>Composite key:</b> Key <code>flightId:seatNumber</code> ensures each seat is an independent entry — concurrent operations on different seats never contend.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemoryPaymentRepository</div>
+                <div class="class-name" style="color:var(--purple);">PaymentRepository</div>
+                <div class="class-desc">Persists all payment records regardless of outcome — supports audit trail by storing both successful and failed transactions.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> payments : ConcurrentHashMap&lt;String, Payment&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(Payment)</div>
+                <div class="class-method"><span class="vis">+</span> findById(String) : Optional&lt;Payment&gt;</div>
+            </div>
+        </div>
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → FlightPriceRepositoryImpl</div>
+                <div class="class-name" style="color:var(--purple);">FlightPriceRepository</div>
+                <div class="class-desc">Stores per-class pricing for each flight — queried during search to enrich flight results with fare information.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> map : ConcurrentHashMap&lt;String, List&lt;FlightPrice&gt;&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(FlightPrice)</div>
+                <div class="class-method"><span class="vis">+</span> findByFlightAndSeatClass(flightId, seatClass)</div>
+                <div class="class-method"><span class="vis">+</span> findByFlight(flightId) : List&lt;FlightPrice&gt;</div>
+            </div>
+        </div>
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemoryPassengerRepository</div>
+                <div class="class-name" style="color:var(--purple);">PassengerRepository</div>
+                <div class="class-desc">Stores passenger identity records — enables lookup by passengerId for booking validation and passenger management.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> passengers : ConcurrentHashMap&lt;String, Passenger&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(Passenger)</div>
+                <div class="class-method"><span class="vis">+</span> findById(String) : Optional&lt;Passenger&gt;</div>
+            </div>
+        </div>
+
+        <div class="class-card card-repo">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt; → InMemoryBaggageRepository</div>
+                <div class="class-name" style="color:var(--purple);">BaggageRepository</div>
+                <div class="class-desc">Stores baggage records grouped by flightId — supports lookup by flight or by flight + passenger combination.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-field"><span class="vis">-</span> map : ConcurrentHashMap&lt;String, List&lt;Baggage&gt;&gt;</div>
+                <div class="class-method"><span class="vis">+</span> save(Baggage)</div>
+                <div class="class-method"><span class="vis">+</span> getByFlightId(flightId) : List</div>
+                <div class="class-method"><span class="vis">+</span> getByFlightIdAndPassengerId(...) : Baggage</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ STRATEGIES ═══════════════════ -->
+    <div class="section-label">🎨 Strategies & Factory</div>
+    <div class="class-grid cols-2">
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt;</div>
+                <div class="class-name" style="color:var(--orange);">SeatAllocationStrategy</div>
+                <div class="class-desc">Defines the contract for seat state transitions — implementations can vary from manual selection to auto-assignment algorithms.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> lockSeat(inventory, bookingId) : SeatInventory</div>
+                <div class="class-method"><span class="vis">+</span> bookSeat(inventory, bookingId) : SeatInventory</div>
+                <div class="class-method"><span class="vis">+</span> unlockSeat(inventory) : SeatInventory</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">implements SeatAllocationStrategy</div>
+                <div class="class-name" style="color:var(--orange);">ManualSeatAllocationStrategy</div>
+                <div class="class-desc">Validates seat ownership and transitions seat state — enforces booking ID match before confirming, prevents unauthorized seat changes.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Dependencies</div>
+                <div class="class-field"><span class="vis">-</span> seatInventoryRepository <span class="rel-type rel-dep">depends</span></div>
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> lockSeat() — checks AVAILABLE, sets LOCKED + version++</div>
+                <div class="class-method"><span class="vis">+</span> bookSeat() — checks LOCKED + owner match, sets BOOKED + version++</div>
+                <div class="class-method"><span class="vis">+</span> unlockSeat() — if LOCKED, resets to AVAILABLE + version++</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt;</div>
+                <div class="class-name" style="color:var(--orange);">RefundPolicy</div>
+                <div class="class-desc">Defines the contract for refund amount calculation — swappable to support different airline refund tiers.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> calculateRefund(originalAmount, hoursBeforeDeparture) : double</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">implements RefundPolicy</div>
+                <div class="class-name" style="color:var(--orange);">StandardRefundPolicy</div>
+                <div class="class-desc">Tiered refund calculation based on hours before departure — 90% for early, 50% for moderate, zero for last-minute cancellations.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> calculateRefund(amount, hours)</div>
+                <div class="section-divider">Rules</div>
+                <div class="class-field" style="color:var(--text-muted); font-size:0.7rem;"><span class="vis"> </span> ≥ 48h → 90% refund</div>
+                <div class="class-field" style="color:var(--text-muted); font-size:0.7rem;"><span class="vis"> </span> ≥ 24h → 50% refund</div>
+                <div class="class-field" style="color:var(--text-muted); font-size:0.7rem;"><span class="vis"> </span> &lt; 24h → 0% refund</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;interface&gt;&gt;</div>
+                <div class="class-name" style="color:var(--orange);">PaymentGateway</div>
+                <div class="class-desc">Abstracts payment processing — all gateway implementations expose a single method, enabling runtime provider switching.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> processPayment(paymentId, amount) : boolean</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">implements PaymentGateway</div>
+                <div class="class-name" style="color:var(--orange);">UpiPaymentGateway</div>
+                <div class="class-desc">Simulates UPI payment processing with a 97% success rate — stateless implementation safe for reuse across requests.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> processPayment() — random.nextInt(100) &gt;= 3</div>
+            </div>
+        </div>
+
+        <div class="class-card card-strategy">
+            <div class="class-header">
+                <div class="class-stereotype">implements PaymentGateway</div>
+                <div class="class-name" style="color:var(--orange);">CardPaymentGateway</div>
+                <div class="class-desc">Handles card-based payment processing — concrete gateway implementation selectable via factory at runtime.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> processPayment(paymentId, amount) : boolean</div>
+            </div>
+        </div>
+
+        <div class="class-card card-factory">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;factory&gt;&gt;</div>
+                <div class="class-name" style="color:var(--yellow);">PaymentGatewayFactory</div>
+                <div class="class-desc">Creates the correct PaymentGateway instance based on a provider string — decouples clients from concrete gateway classes.</div>
+            </div>
+            <div class="class-body">
+                <div class="section-divider">Methods</div>
+                <div class="class-method"><span class="vis">+</span> createGateway(type) : PaymentGateway &nbsp;<span style="color:var(--text-muted);font-size:0.7rem;">[static]</span></div>
+                <div class="section-divider">Mappings</div>
+                <div class="class-field" style="color:var(--text-muted);font-size:0.7rem;"><span class="vis"> </span> "CARD" → CardPaymentGateway</div>
+                <div class="class-field" style="color:var(--text-muted);font-size:0.7rem;"><span class="vis"> </span> "UPI"  → UpiPaymentGateway</div>
+                <div class="class-field" style="color:var(--text-muted);font-size:0.7rem;"><span class="vis"> </span> else   → IllegalArgumentException</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ ENUMS ═══════════════════ -->
+    <div class="section-label">🔢 Enumerations</div>
+    <div class="class-grid cols-4">
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">BookingStatus</div>
+                <div class="class-desc">Tracks booking lifecycle state machine.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">INITIATED</div>
+                <div class="class-enum-val">CONFIRMED</div>
+                <div class="class-enum-val">CANCELLED</div>
+                <div class="class-enum-val">FAILED</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">PaymentStatus</div>
+                <div class="class-desc">Tracks payment transaction state machine.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">PENDING</div>
+                <div class="class-enum-val">SUCCESS</div>
+                <div class="class-enum-val">FAILED</div>
+                <div class="class-enum-val">REFUNDED</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">SeatStatus</div>
+                <div class="class-desc">Tracks seat availability state machine.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">AVAILABLE</div>
+                <div class="class-enum-val">LOCKED</div>
+                <div class="class-enum-val">BOOKED</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">SeatClass</div>
+                <div class="class-desc">Defines available seating tiers on aircraft.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">ECONOMY</div>
+                <div class="class-enum-val">PREMIUM</div>
+                <div class="class-enum-val">BUSINESS</div>
+                <div class="class-enum-val">FIRST</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">FlightStatus</div>
+                <div class="class-desc">Tracks operational status of a flight.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">SCHEDULED</div>
+                <div class="class-enum-val">DELAYED</div>
+                <div class="class-enum-val">BOARDING</div>
+                <div class="class-enum-val">DEPARTED</div>
+                <div class="class-enum-val">ARRIVED</div>
+                <div class="class-enum-val">CANCELLED</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">CrewRole</div>
+                <div class="class-desc">Defines roles assigned to flight crew members.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">PILOT</div>
+                <div class="class-enum-val">COPILOT</div>
+                <div class="class-enum-val">CABIN_CREW</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">UserRole</div>
+                <div class="class-desc">Defines access level for system users.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">PASSENGER</div>
+                <div class="class-enum-val">STAFF</div>
+                <div class="class-enum-val">ADMIN</div>
+            </div>
+        </div>
+
+        <div class="class-card card-enum">
+            <div class="class-header">
+                <div class="class-stereotype">&lt;&lt;enum&gt;&gt;</div>
+                <div class="class-name" style="color:var(--teal);">NotificationType</div>
+                <div class="class-desc">Classifies notification events sent to passengers.</div>
+            </div>
+            <div class="class-body">
+                <div class="class-enum-val">BOOKING_CONFIRMED</div>
+                <div class="class-enum-val">BOOKING_CANCELLED</div>
+                <div class="class-enum-val">PAYMENT_SUCCESS</div>
+                <div class="class-enum-val">PAYMENT_FAILED</div>
+                <div class="class-enum-val">FLIGHT_DELAYED</div>
+                <div class="class-enum-val">FLIGHT_CANCELLED</div>
+                <div class="class-enum-val">BOARDING_PASS_GENERATED</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════════ RELATIONSHIPS ═══════════════════ -->
+    <div class="section-label">🔗 Key Relationships</div>
+    <div class="rel-section">
+        <div class="rel-section-header">📦 Model Relationships</div>
+        <table class="rel-table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th></th>
+                    <th>To</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Flight</td>
+                    <td><span class="arrow-sym">◆──</span></td>
+                    <td>Route, Schedule, Seat</td>
+                    <td><span class="rel-type rel-comp">◆ Composition</span></td>
+                    <td>Route, Schedule, and Seats cannot exist without a Flight</td>
+                </tr>
+                <tr>
+                    <td>Flight</td>
+                    <td><span class="arrow-sym">◇──</span></td>
+                    <td>Aircraft, Crew</td>
+                    <td><span class="rel-type rel-agg">◇ Aggregation</span></td>
+                    <td>Aircraft and Crew exist independently and are assigned to flights</td>
+                </tr>
+                <tr>
+                    <td>Booking</td>
+                    <td><span class="arrow-sym">───</span></td>
+                    <td>Flight, Payment</td>
+                    <td><span class="rel-type rel-assoc">→ Association</span></td>
+                    <td>Booking references a Flight and Payment but doesn't own them</td>
+                </tr>
+                <tr>
+                    <td>Booking</td>
+                    <td><span class="arrow-sym">◇──</span></td>
+                    <td>Passenger, Seat</td>
+                    <td><span class="rel-type rel-agg">◇ Aggregation</span></td>
+                    <td>Passengers and Seats exist independently but are grouped in a Booking</td>
+                </tr>
+                <tr>
+                    <td>Route</td>
+                    <td><span class="arrow-sym">◆──</span></td>
+                    <td>Airport (x2)</td>
+                    <td><span class="rel-type rel-comp">◆ Composition</span></td>
+                    <td>Route owns source and destination Airport references</td>
+                </tr>
+                <tr>
+                    <td>SeatInventory</td>
+                    <td><span class="arrow-sym">───</span></td>
+                    <td>Flight, Seat</td>
+                    <td><span class="rel-type rel-assoc">→ Association</span></td>
+                    <td>Tracks status of a Seat on a Flight via string IDs</td>
+                </tr>
+                <tr>
+                    <td>SeatLock</td>
+                    <td><span class="arrow-sym">───</span></td>
+                    <td>SeatInventory</td>
+                    <td><span class="rel-type rel-assoc">→ Association</span></td>
+                    <td>SeatLock holds a temporary claim on a SeatInventory entry</td>
+                </tr>
+                <tr>
+                    <td>AdminUser, AirlineStaff</td>
+                    <td><span class="arrow-sym">↑──</span></td>
+                    <td>User</td>
+                    <td><span class="rel-type rel-ext">↑ Extends</span></td>
+                    <td>Both inherit username and userRole from base User class</td>
+                </tr>
+                <tr>
+                    <td>FlightWithFlightPrice</td>
+                    <td><span class="arrow-sym">◆──</span></td>
+                    <td>Flight, FlightPrice</td>
+                    <td><span class="rel-type rel-comp">◆ Composition</span></td>
+                    <td>Query result wrapper — owns both flight and its price list</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div class="rel-section">
+        <div class="rel-section-header">⚙️ Service → Repository Dependencies</div>
+        <table class="rel-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th></th>
+                    <th>Repository / Dependency</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BookingServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>FlightRepo, BookingRepo, PaymentRepo, SeatInventoryRepo, RefundService, SeatAllocationStrategy, NotificationService</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>PaymentServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>PaymentRepository, PaymentGatewayFactory</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>RefundServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>PaymentService, RefundPolicy</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>FlightSearchServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>FlightRepository, FlightPriceRepository</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>SeatInventoryServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>SeatInventoryRepository</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>FlightStatusServiceImpl</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>FlightRepository</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>SeatLockExpiryService</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>SeatInventoryRepository, SeatLock Map</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+                <tr>
+                    <td>ManualSeatAllocationStrategy</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>SeatInventoryRepository</td>
+                    <td><span class="rel-type rel-dep">depends</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div class="rel-section">
+        <div class="rel-section-header">🎨 Strategy & Factory Relationships</div>
+        <table class="rel-table">
+            <thead>
+                <tr>
+                    <th>Implementation</th>
+                    <th></th>
+                    <th>Interface</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ManualSeatAllocationStrategy</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>SeatAllocationStrategy</td>
+                    <td><span class="rel-type rel-impl">⇢ Implements</span></td>
+                </tr>
+                <tr>
+                    <td>StandardRefundPolicy</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>RefundPolicy</td>
+                    <td><span class="rel-type rel-impl">⇢ Implements</span></td>
+                </tr>
+                <tr>
+                    <td>UpiPaymentGateway, CardPaymentGateway</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>PaymentGateway</td>
+                    <td><span class="rel-type rel-impl">⇢ Implements</span></td>
+                </tr>
+                <tr>
+                    <td>PaymentGatewayFactory</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>PaymentGateway (creates)</td>
+                    <td><span class="rel-type rel-dep">creates</span></td>
+                </tr>
+                <tr>
+                    <td>All InMemory* classes</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>Respective Repository interfaces</td>
+                    <td><span class="rel-type rel-impl">⇢ Implements</span></td>
+                </tr>
+                <tr>
+                    <td>All *ServiceImpl classes</td>
+                    <td><span class="arrow-sym">⇢</span></td>
+                    <td>Respective Service interfaces</td>
+                    <td><span class="rel-type rel-impl">⇢ Implements</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <p>✈️ Airline Management System — Class Diagram</p>
+    <p style="margin-top:6px; font-size:0.75rem;">
+        19 Classes &nbsp;·&nbsp; 8 Enums &nbsp;·&nbsp;
+        6 Concurrency-Critical Classes &nbsp;·&nbsp;
+        3 Design Patterns &nbsp;·&nbsp; Java 17+
+    </p>
+</div>
+
+</body>
+</html>
