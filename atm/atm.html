@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM System — Class Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f1117;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #61dafb;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 50px;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #61dafb;
+            border-bottom: 1px solid #2a2d3a;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: flex-start;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: #1a1d27;
+            border: 1px solid #2a2d3a;
+            border-radius: 10px;
+            width: 300px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(97, 218, 251, 0.15);
+        }
+
+        .card-header {
+            padding: 12px 16px;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-header .stereotype {
+            font-size: 0.7rem;
+            font-weight: normal;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .card-header .class-name {
+            font-size: 1.05rem;
+        }
+
+        .card-description {
+            padding: 8px 16px 10px;
+            font-size: 0.78rem;
+            color: #aaa;
+            border-bottom: 1px solid #2a2d3a;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .card-body {
+            padding: 12px 16px;
+        }
+
+        .section-label {
+            font-size: 0.68rem;
+            color: #61dafb;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            margin-top: 10px;
+        }
+
+        .section-label:first-child {
+            margin-top: 0;
+        }
+
+        .field, .method {
+            font-size: 0.78rem;
+            padding: 3px 0;
+            color: #ccc;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .field {
+            color: #b0c4de;
+        }
+
+        .method {
+            color: #98fb98;
+        }
+
+        .concurrency-box {
+            background: #1e2a1e;
+            border: 1px solid #3a5a3a;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #90ee90;
+            line-height: 1.6;
+        }
+
+        .concurrency-box .concurrency-title {
+            font-weight: bold;
+            color: #7fff00;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .concurrency-box ul {
+            padding-left: 16px;
+        }
+
+        .concurrency-box ul li {
+            margin-bottom: 3px;
+        }
+
+        /* Header colors per type */
+        .type-model       { background: #1a3a5c; border-bottom: 2px solid #4a90d9; }
+        .type-model .stereotype { color: #4a90d9; }
+
+        .type-service     { background: #2a1a4a; border-bottom: 2px solid #9b59b6; }
+        .type-service .stereotype { color: #c39bd3; }
+
+        .type-repository  { background: #1a3a2a; border-bottom: 2px solid #27ae60; }
+        .type-repository .stereotype { color: #58d68d; }
+
+        .type-state       { background: #3a2a1a; border-bottom: 2px solid #e67e22; }
+        .type-state .stereotype { color: #f0a500; }
+
+        .type-enum        { background: #2a2a1a; border-bottom: 2px solid #f1c40f; }
+        .type-enum .stereotype { color: #f1c40f; }
+
+        .type-hardware    { background: #2a1a1a; border-bottom: 2px solid #e74c3c; }
+        .type-hardware .stereotype { color: #e74c3c; }
+
+        .type-dispenser   { background: #1a2a3a; border-bottom: 2px solid #1abc9c; }
+        .type-dispenser .stereotype { color: #1abc9c; }
+
+        .type-interface   { background: #1a1a3a; border-bottom: 2px solid #3498db; }
+        .type-interface .stereotype { color: #3498db; }
+
+        /* Relationships section */
+        .relationships {
+            margin-bottom: 50px;
+        }
+
+        .rel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .rel-table th {
+            background: #1a1d27;
+            color: #61dafb;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid #2a2d3a;
+        }
+
+        .rel-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #1e2130;
+            color: #ccc;
+            vertical-align: top;
+        }
+
+        .rel-table tr:hover td {
+            background: #1e2130;
+        }
+
+        .rel-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .rel-uses        { background: #1a3a5c; color: #4a90d9; }
+        .rel-implements  { background: #2a1a4a; color: #c39bd3; }
+        .rel-extends     { background: #3a2a1a; color: #f0a500; }
+        .rel-composes    { background: #1a3a2a; color: #58d68d; }
+        .rel-depends     { background: #2a2a1a; color: #f1c40f; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #2a2d3a;
+            margin: 40px 0;
+        }
+
+        .concurrency-summary {
+            background: #1a2a1a;
+            border: 1px solid #3a5a3a;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 50px;
+        }
+
+        .concurrency-summary h2 {
+            color: #7fff00;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .concurrency-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .concurrency-summary table th {
+            background: #1e3a1e;
+            color: #90ee90;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid #3a5a3a;
+        }
+
+        .concurrency-summary table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #1e2a1e;
+            color: #ccc;
+            vertical-align: top;
+        }
+
+        .concurrency-summary table tr:hover td {
+            background: #1e2a1e;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            background: #2a4a2a;
+            color: #7fff00;
+            border: 1px solid #3a6a3a;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🏧 ATM System — Class Diagram</h1>
+<p class="subtitle">Low Level Design · All Classes · Relationships · Concurrency Notes</p>
+
+<!-- LEGEND -->
+<div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4a90d9"></div> Model</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9b59b6"></div> Service</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div> Repository</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e67e22"></div> State</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f1c40f"></div> Enum</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> Hardware</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1abc9c"></div> Dispenser (CoR)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3498db"></div> Interface</div>
+</div>
+
+<!-- ===================== ENUMS ===================== -->
+<div class="section-title">Enums</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-enum">
+            <span class="stereotype">&lt;&lt;enum&gt;&gt;</span>
+            <span class="class-name">AtmStatus</span>
+        </div>
+        <div class="card-description">Represents the operational status of the ATM machine.</div>
+        <div class="card-body">
+            <div class="section-label">Values</div>
+            <div class="field">ACTIVE</div>
+            <div class="field">OUT_OF_SERVICE</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-enum">
+            <span class="stereotype">&lt;&lt;enum&gt;&gt;</span>
+            <span class="class-name">Denomination</span>
+        </div>
+        <div class="card-description">Defines supported currency note denominations with their integer values.</div>
+        <div class="card-body">
+            <div class="section-label">Values</div>
+            <div class="field">TWO_THOUSAND(2000)</div>
+            <div class="field">FIVE_HUNDRED(500)</div>
+            <div class="field">TWO_HUNDRED(200)</div>
+            <div class="field">ONE_HUNDRED(100)</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ getValue(): int</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-enum">
+            <span class="stereotype">&lt;&lt;enum&gt;&gt;</span>
+            <span class="class-name">TransactionType</span>
+        </div>
+        <div class="card-description">Categorizes the type of banking transaction performed.</div>
+        <div class="card-body">
+            <div class="section-label">Values</div>
+            <div class="field">WITHDRAWAL</div>
+            <div class="field">DEPOSIT</div>
+            <div class="field">BALANCE_INQUIRY</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== MODELS ===================== -->
+<div class="section-title">Models</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-model">
+            <span class="stereotype">&lt;&lt;model&gt;&gt;</span>
+            <span class="class-name">Atm</span>
+        </div>
+        <div class="card-description">Central entity representing the ATM machine. Delegates all user operations to the current state.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- atmId: String</div>
+            <div class="field">- status: AtmStatus</div>
+            <div class="field">- currentState: AtmState <span style="color:#f0a500">[volatile]</span></div>
+            <div class="field">- cashManagementService: CashManagementService</div>
+            <div class="field">- bankingService: BankingService</div>
+            <div class="field">- cardService: CardService</div>
+            <div class="field">- cashDeposit: CashDeposit</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ insertCard(card): void</div>
+            <div class="method">+ authenticate(pin): void</div>
+            <div class="method">+ withdraw(amount): void</div>
+            <div class="method">+ deposit(cash): void</div>
+            <div class="method">+ checkBalance(): BigDecimal</div>
+            <div class="method">+ ejectCard(): void</div>
+            <div class="method">+ checkAndUpdateStatus(): void</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li><code>currentState</code> is marked <strong>volatile</strong> to ensure state transitions are immediately visible across all threads without stale reads.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-model">
+            <span class="stereotype">&lt;&lt;model&gt;&gt;</span>
+            <span class="class-name">Account</span>
+        </div>
+        <div class="card-description">Represents a bank account. Owns thread-safe debit and credit operations using a per-account lock.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- accountNumber: String</div>
+            <div class="field">- balance: BigDecimal</div>
+            <div class="field">- lock: ReentrantLock <span style="color:#f0a500">[concurrency]</span></div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ debit(amount): void</div>
+            <div class="method">+ credit(amount): void</div>
+            <div class="method">+ getBalance(): BigDecimal</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li>Each <code>Account</code> has its own <strong>ReentrantLock</strong>.</li>
+                    <li><code>debit()</code> and <code>credit()</code> acquire the lock before modifying balance, ensuring no two threads can modify the same account simultaneously.</li>
+                    <li>Lock is released in a <strong>finally block</strong> to prevent deadlocks.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-model">
+            <span class="stereotype">&lt;&lt;model&gt;&gt;</span>
+            <span class="class-name">Card</span>
+        </div>
+        <div class="card-description">Represents a user's ATM card. Holds card number, linked account, and hashed PIN for secure authentication.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- cardNumber: String</div>
+            <div class="field">- accountNumber: String</div>
+            <div class="field">- hashedPin: String</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-model">
+            <span class="stereotype">&lt;&lt;model&gt;&gt;</span>
+            <span class="class-name">CashInventory</span>
+        </div>
+        <div class="card-description">Tracks the count of each denomination available inside the ATM. Mutation is controlled by CashManagementService.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- cashMap: EnumMap&lt;Denomination, Integer&gt;</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ addCash(denomination, count): void</div>
+            <div class="method">+ removeCash(denomination, count): void</div>
+            <div class="method">+ getCount(denomination): int</div>
+            <div class="method">+ getCashMap(): Map</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li>Intentionally <strong>not synchronized</strong> at this level.</li>
+                    <li>All synchronization is owned by <strong>CashManagementServiceImpl</strong> to avoid double-locking and keep the locking boundary clear.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-model">
+            <span class="stereotype">&lt;&lt;model&gt;&gt;</span>
+            <span class="class-name">Transaction</span>
+        </div>
+        <div class="card-description">Immutable audit record of every banking operation performed, including success or failure status.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- transactionId: String (UUID)</div>
+            <div class="field">- accountNumber: String</div>
+            <div class="field">- type: TransactionType</div>
+            <div class="field">- amount: BigDecimal</div>
+            <div class="field">- timestamp: LocalDateTime</div>
+            <div class="field">- success: boolean</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== INTERFACES ===================== -->
+<div class="section-title">Interfaces</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">AtmState</span>
+        </div>
+        <div class="card-description">Contract for all ATM states. Each state controls which operations are permitted at that point in the user session.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ insertCard(card): void</div>
+            <div class="method">+ authenticate(pin): void</div>
+            <div class="method">+ checkBalance(): BigDecimal</div>
+            <div class="method">+ withdraw(amount): void</div>
+            <div class="method">+ deposit(cash): void</div>
+            <div class="method">+ ejectCard(): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">BankingService</span>
+        </div>
+        <div class="card-description">Abstracts all bank backend operations including authentication, account transactions, and history retrieval.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ authenticate(card, pin): boolean</div>
+            <div class="method">+ getAccount(accountNumber): Account</div>
+            <div class="method">+ debit(accountNumber, amount): void</div>
+            <div class="method">+ credit(accountNumber, amount): void</div>
+            <div class="method">+ getBalance(accountNumber): BigDecimal</div>
+            <div class="method">+ getTransactionHistory(accountNumber): List</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">CashManagementService</span>
+        </div>
+        <div class="card-description">Abstracts all cash-related operations including dispensing, depositing, and inventory checks.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ canDispense(amount): boolean</div>
+            <div class="method">+ dispense(amount): Map</div>
+            <div class="method">+ deposit(cash): void</div>
+            <div class="method">+ hasCash(): boolean</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">CardService</span>
+        </div>
+        <div class="card-description">Abstracts card lookup and persistence, decoupling the ATM from direct repository access.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByCardNumber(cardNumber): Card</div>
+            <div class="method">+ save(card): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">AccountRepository</span>
+        </div>
+        <div class="card-description">Data access contract for Account persistence and retrieval.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByAccountNumber(accountNumber): Account</div>
+            <div class="method">+ save(account): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">CardRepository</span>
+        </div>
+        <div class="card-description">Data access contract for Card persistence and retrieval.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByCardNumber(cardNumber): Card</div>
+            <div class="method">+ save(card): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-interface">
+            <span class="stereotype">&lt;&lt;interface&gt;&gt;</span>
+            <span class="class-name">TransactionRepository</span>
+        </div>
+        <div class="card-description">Data access contract for Transaction audit log persistence and retrieval.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ save(transaction): void</div>
+            <div class="method">+ findByAccountNumber(accountNumber): List</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== SERVICES ===================== -->
+<div class="section-title">Service Implementations</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-service">
+            <span class="stereotype">&lt;&lt;service&gt;&gt;</span>
+            <span class="class-name">BankingServiceImpl</span>
+        </div>
+        <div class="card-description">Implements banking operations — PIN hashing, account debit/credit, and transaction logging.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- accountRepository: AccountRepository</div>
+            <div class="field">- transactionRepository: TransactionRepository</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ authenticate(card, pin): boolean</div>
+            <div class="method">+ debit(accountNumber, amount): void</div>
+            <div class="method">+ credit(accountNumber, amount): void</div>
+            <div class="method">+ getBalance(accountNumber): BigDecimal</div>
+            <div class="method">+ getTransactionHistory(accountNumber): List</div>
+            <div class="method">+ hashPin(pin): String [static]</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-service">
+            <span class="stereotype">&lt;&lt;service&gt;&gt;</span>
+            <span class="class-name">CashManagementServiceImpl</span>
+        </div>
+        <div class="card-description">Manages ATM cash inventory. Orchestrates the Chain of Responsibility for dispensing and owns all cash-related locking.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- cashInventory: CashInventory</div>
+            <div class="field">- cashDispenser: CashDispenser</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ canDispense(amount): boolean</div>
+            <div class="method">+ dispense(amount): Map</div>
+            <div class="method">+ deposit(cash): void</div>
+            <div class="method">+ hasCash(): boolean</div>
+            <div class="method">- buildChain(): CashDispenseHandler</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li><code>canDispense()</code>, <code>dispense()</code>, <code>deposit()</code>, and <code>hasCash()</code> are all <strong>synchronized</strong> on the service instance.</li>
+                    <li>This ensures only one thread at a time can read or modify the cash inventory, preventing race conditions during concurrent withdrawals.</li>
+                    <li><code>CashInventory</code> itself is intentionally <strong>not synchronized</strong> — this class is the single owner of that lock.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-service">
+            <span class="stereotype">&lt;&lt;service&gt;&gt;</span>
+            <span class="class-name">CardServiceImpl</span>
+        </div>
+        <div class="card-description">Validates and retrieves card details from the repository. Throws exception if card is not recognized.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- cardRepository: CardRepository</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByCardNumber(cardNumber): Card</div>
+            <div class="method">+ save(card): void</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== REPOSITORIES ===================== -->
+<div class="section-title">Repository Implementations</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-repository">
+            <span class="stereotype">&lt;&lt;repository&gt;&gt;</span>
+            <span class="class-name">InMemoryAccountRepository</span>
+        </div>
+        <div class="card-description">In-memory implementation of AccountRepository using a thread-safe ConcurrentHashMap.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- accounts: ConcurrentHashMap&lt;String, Account&gt;</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByAccountNumber(accountNumber): Account</div>
+            <div class="method">+ save(account): void</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li>Uses <strong>ConcurrentHashMap</strong> for thread-safe reads and writes without explicit synchronization.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-repository">
+            <span class="stereotype">&lt;&lt;repository&gt;&gt;</span>
+            <span class="class-name">InMemoryCardRepository</span>
+        </div>
+        <div class="card-description">In-memory implementation of CardRepository using a thread-safe ConcurrentHashMap.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- cards: ConcurrentHashMap&lt;String, Card&gt;</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ findByCardNumber(cardNumber): Card</div>
+            <div class="method">+ save(card): void</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li>Uses <strong>ConcurrentHashMap</strong> for thread-safe reads and writes without explicit synchronization.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-repository">
+            <span class="stereotype">&lt;&lt;repository&gt;&gt;</span>
+            <span class="class-name">InMemoryTransactionRepository</span>
+        </div>
+        <div class="card-description">In-memory audit log store. Maintains a per-account list of all transactions in a thread-safe manner.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- store: ConcurrentHashMap&lt;String, CopyOnWriteArrayList&gt;</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ save(transaction): void</div>
+            <div class="method">+ findByAccountNumber(accountNumber): List</div>
+            <div class="concurrency-box">
+                <div class="concurrency-title">🔒 Concurrency Note</div>
+                <ul>
+                    <li>Uses <strong>ConcurrentHashMap</strong> for account-level bucketing.</li>
+                    <li>Uses <strong>CopyOnWriteArrayList</strong> per account — safe for concurrent reads with occasional writes (append-only transaction log).</li>
+                    <li><code>computeIfAbsent()</code> ensures atomic list creation for new accounts.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== STATE PATTERN ===================== -->
+<div class="section-title">State Pattern — ATM States</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-state">
+            <span class="stereotype">&lt;&lt;abstract&gt;&gt;</span>
+            <span class="class-name">AbstractAtmState</span>
+        </div>
+        <div class="card-description">Base class for all ATM states. Provides default exception-throwing implementations for all operations.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field"># atm: Atm</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ insertCard(): throws RuntimeException</div>
+            <div class="method">+ authenticate(): throws RuntimeException</div>
+            <div class="method">+ checkBalance(): throws RuntimeException</div>
+            <div class="method">+ withdraw(): throws RuntimeException</div>
+            <div class="method">+ deposit(): throws RuntimeException</div>
+            <div class="method">+ ejectCard(): throws RuntimeException</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-state">
+            <span class="stereotype">&lt;&lt;state&gt;&gt;</span>
+            <span class="class-name">IdleState</span>
+        </div>
+        <div class="card-description">Initial state of the ATM. Only allows card insertion after validating the card via CardService.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ insertCard(card): void</div>
+            <div class="section-label">Transitions To</div>
+            <div class="field">→ CardInsertedState (on valid card)</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-state">
+            <span class="stereotype">&lt;&lt;state&gt;&gt;</span>
+            <span class="class-name">CardInsertedState</span>
+        </div>
+        <div class="card-description">State after card insertion. Waits for PIN authentication or card ejection.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- card: Card</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ authenticate(pin): void</div>
+            <div class="method">+ ejectCard(): void</div>
+            <div class="section-label">Transitions To</div>
+            <div class="field">→ AuthenticatedState (on correct PIN)</div>
+            <div class="field">→ IdleState (on eject)</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-state">
+            <span class="stereotype">&lt;&lt;state&gt;&gt;</span>
+            <span class="class-name">AuthenticatedState</span>
+        </div>
+        <div class="card-description">Fully authenticated state. Allows balance inquiry, withdrawal, deposit, and card ejection.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field">- card: Card</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ checkBalance(): BigDecimal</div>
+            <div class="method">+ withdraw(amount): void</div>
+            <div class="method">+ deposit(cash): void</div>
+            <div class="method">+ ejectCard(): void</div>
+            <div class="section-label">Transitions To</div>
+            <div class="field">→ IdleState (on eject)</div>
+            <div class="field">→ OutOfServiceState (if cash runs out)</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-state">
+            <span class="stereotype">&lt;&lt;state&gt;&gt;</span>
+            <span class="class-name">OutOfServiceState</span>
+        </div>
+        <div class="card-description">Terminal state when ATM has no cash. Rejects all operations with an out-of-service message.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ insertCard(): throws RuntimeException</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== CHAIN OF RESPONSIBILITY ===================== -->
+<div class="section-title">Chain of Responsibility — Cash Dispensing</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-dispenser">
+            <span class="stereotype">&lt;&lt;abstract&gt;&gt;</span>
+            <span class="class-name">CashDispenseHandler</span>
+        </div>
+        <div class="card-description">Abstract base for the denomination chain. Each handler processes its denomination and passes the remainder to the next.</div>
+        <div class="card-body">
+            <div class="section-label">Fields</div>
+            <div class="field"># next: CashDispenseHandler</div>
+            <div class="section-label">Methods</div>
+            <div class="method">+ setNext(handler): void</div>
+            <div class="method">+ handle(amount, result, available): void [abstract]</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-dispenser">
+            <span class="stereotype">&lt;&lt;handler&gt;&gt;</span>
+            <span class="class-name">TwoThousandHandler</span>
+        </div>
+        <div class="card-description">Handles dispensing of ₹2000 notes. Passes remaining amount to the next handler in the chain.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ handle(amount, result, available): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-dispenser">
+            <span class="stereotype">&lt;&lt;handler&gt;&gt;</span>
+            <span class="class-name">FiveHundredHandler</span>
+        </div>
+        <div class="card-description">Handles dispensing of ₹500 notes. Passes remaining amount to the next handler in the chain.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ handle(amount, result, available): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-dispenser">
+            <span class="stereotype">&lt;&lt;handler&gt;&gt;</span>
+            <span class="class-name">TwoHundredHandler</span>
+        </div>
+        <div class="card-description">Handles dispensing of ₹200 notes. Passes remaining amount to the next handler in the chain.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ handle(amount, result, available): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-dispenser">
+            <span class="stereotype">&lt;&lt;handler&gt;&gt;</span>
+            <span class="class-name">OneHundredHandler</span>
+        </div>
+        <div class="card-description">Handles dispensing of ₹100 notes. Last handler in the chain — remainder after this is unserviceable.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ handle(amount, result, available): void</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== HARDWARE ===================== -->
+<div class="section-title">Hardware Layer</div>
+<div class="grid">
+
+    <div class="card">
+        <div class="card-header type-hardware">
+            <span class="stereotype">&lt;&lt;hardware&gt;&gt;</span>
+            <span class="class-name">CashDispenser</span>
+        </div>
+        <div class="card-description">Physical hardware abstraction for dispensing cash notes to the user.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ dispense(notes: Map): void</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header type-hardware">
+            <span class="stereotype">&lt;&lt;hardware&gt;&gt;</span>
+            <span class="class-name">CashDeposit</span>
+        </div>
+        <div class="card-description">Physical hardware abstraction for accepting and acknowledging deposited cash from the user.</div>
+        <div class="card-body">
+            <div class="section-label">Methods</div>
+            <div class="method">+ acceptDeposit(depositedCash: Map): void</div>
+        </div>
+    </div>
+
+</div>
+
+<hr class="divider">
+
+<!-- ===================== CONCURRENCY SUMMARY ===================== -->
+<div class="concurrency-summary">
+    <h2>🔒 Concurrency Handling — Full Summary</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Mechanism</th>
+                <th>What It Protects</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Account</strong></td>
+                <td><span class="badge">ReentrantLock</span></td>
+                <td>Prevents concurrent debit/credit on the same account. Each account has its own lock for fine-grained concurrency.</td>
+            </tr>
+            <tr>
+                <td><strong>CashManagementServiceImpl</strong></td>
+                <td><span class="badge">synchronized</span></td>
+                <td>Ensures only one thread at a time can check or modify the ATM cash inventory. Prevents double-dispensing.</td>
+            </tr>
+            <tr>
+                <td><strong>InMemoryAccountRepository</strong></td>
+                <td><span class="badge">ConcurrentHashMap</span></td>
+                <td>Thread-safe account lookups and saves without explicit locking.</td>
+            </tr>
+            <tr>
+                <td><strong>InMemoryCardRepository</strong></td>
+                <td><span class="badge">ConcurrentHashMap</span></td>
+                <td>Thread-safe card lookups and saves without explicit locking.</td>
+            </tr>
+            <tr>
+                <td><strong>InMemoryTransactionRepository</strong></td>
+                <td><span class="badge">ConcurrentHashMap</span> + <span class="badge">CopyOnWriteArrayList</span></td>
+                <td>Thread-safe append-only transaction log. CopyOnWriteArrayList is ideal for read-heavy audit logs.</td>
+            </tr>
+            <tr>
+                <td><strong>Atm</strong></td>
+                <td><span class="badge">volatile</span></td>
+                <td>Ensures state transitions (currentState field) are immediately visible to all threads without caching stale state.</td>
+            </tr>
+            <tr>
+                <td><strong>CashInventory</strong></td>
+                <td>⚠️ None (intentional)</td>
+                <td>Deliberately unsynchronized. CashManagementServiceImpl is the sole owner of the lock for cash operations.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ===================== RELATIONSHIPS ===================== -->
+<div class="section-title">Class Relationships</div>
+<div class="relationships">
+    <table class="rel-table">
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>Relationship</th>
+                <th>To</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-composes">Composes</span></td>
+                <td>AtmState</td>
+                <td>ATM holds a reference to the current state and delegates all operations to it</td>
+            </tr>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>BankingService</td>
+                <td>ATM delegates banking operations to the banking service</td>
+            </tr>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CashManagementService</td>
+                <td>ATM delegates cash operations to the cash management service</td>
+            </tr>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CardService</td>
+                <td>ATM uses card service to validate inserted cards</td>
+            </tr>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-composes">Composes</span></td>
+                <td>CashDeposit</td>
+                <td>ATM owns the physical cash deposit hardware</td>
+            </tr>
+            <tr>
+                <td>AbstractAtmState</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>AtmState</td>
+                <td>Provides default exception-throwing implementations</td>
+            </tr>
+            <tr>
+                <td>IdleState / CardInsertedState / AuthenticatedState / OutOfServiceState</td>
+                <td><span class="rel-type rel-extends">Extends</span></td>
+                <td>AbstractAtmState</td>
+                <td>Each concrete state overrides only the operations it permits</td>
+            </tr>
+            <tr>
+                <td>BankingServiceImpl</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>BankingService</td>
+                <td>Concrete banking operations with PIN hashing and transaction logging</td>
+            </tr>
+            <tr>
+                <td>BankingServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>AccountRepository</td>
+                <td>Fetches and persists account data</td>
+            </tr>
+            <tr>
+                <td>BankingServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>TransactionRepository</td>
+                <td>Persists transaction audit records</td>
+            </tr>
+            <tr>
+                <td>CashManagementServiceImpl</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>CashManagementService</td>
+                <td>Manages cash inventory and orchestrates the dispense chain</td>
+            </tr>
+            <tr>
+                <td>CashManagementServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CashInventory</td>
+                <td>Reads and modifies denomination counts</td>
+            </tr>
+            <tr>
+                <td>CashManagementServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CashDispenser</td>
+                <td>Triggers physical cash dispensing hardware</td>
+            </tr>
+            <tr>
+                <td>CashManagementServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CashDispenseHandler</td>
+                <td>Builds and triggers the Chain of Responsibility for denomination calculation</td>
+            </tr>
+            <tr>
+                <td>CardServiceImpl</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>CardService</td>
+                <td>Validates and retrieves card from repository</td>
+            </tr>
+            <tr>
+                <td>CardServiceImpl</td>
+                <td><span class="rel-type rel-uses">Uses</span></td>
+                <td>CardRepository</td>
+                <td>Fetches card data from the store</td>
+            </tr>
+            <tr>
+                <td>TwoThousandHandler / FiveHundredHandler / TwoHundredHandler / OneHundredHandler</td>
+                <td><span class="rel-type rel-extends">Extends</span></td>
+                <td>CashDispenseHandler</td>
+                <td>Each handler processes its denomination and chains to the next</td>
+            </tr>
+            <tr>
+                <td>InMemoryAccountRepository</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>AccountRepository</td>
+                <td>In-memory ConcurrentHashMap backed account store</td>
+            </tr>
+            <tr>
+                <td>InMemoryCardRepository</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>CardRepository</td>
+                <td>In-memory ConcurrentHashMap backed card store</td>
+            </tr>
+            <tr>
+                <td>InMemoryTransactionRepository</td>
+                <td><span class="rel-type rel-implements">Implements</span></td>
+                <td>TransactionRepository</td>
+                <td>In-memory thread-safe transaction audit log</td>
+            </tr>
+            <tr>
+                <td>Transaction</td>
+                <td><span class="rel-type rel-depends">Depends</span></td>
+                <td>TransactionType</td>
+                <td>Uses TransactionType enum to categorize the operation</td>
+            </tr>
+            <tr>
+                <td>CashInventory</td>
+                <td><span class="rel-type rel-depends">Depends</span></td>
+                <td>Denomination</td>
+                <td>Uses Denomination enum as keys in the cash map</td>
+            </tr>
+            <tr>
+                <td>Atm</td>
+                <td><span class="rel-type rel-depends">Depends</span></td>
+                <td>AtmStatus</td>
+                <td>Uses AtmStatus enum to track operational status</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
