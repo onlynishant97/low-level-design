@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Car Rental System — Class Diagram</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e2e0d8;
+    --border-strong: #c8c6bc;
+    --text-primary: #1a1a18;
+    --text-secondary: #5a5955;
+    --text-tertiary: #8a8880;
+    --enum-bg: #e8f5f0;
+    --enum-border: #2d9e75;
+    --enum-head: #1d6e52;
+    --model-bg: #f0edfc;
+    --model-border: #7f77dd;
+    --model-head: #3c3489;
+    --strategy-bg: #fdf3e0;
+    --strategy-border: #ba7517;
+    --strategy-head: #633806;
+    --factory-bg: #fceee9;
+    --factory-border: #993c1d;
+    --factory-head: #4a1b0c;
+    --repo-bg: #f0f0ee;
+    --repo-border: #5f5e5a;
+    --repo-head: #2c2c2a;
+    --service-bg: #e8f1fb;
+    --service-border: #185fa5;
+    --service-head: #042c53;
+    --concurrency-bg: #fff8e6;
+    --concurrency-border: #d4a017;
+    --badge-bg: #fdf3e0;
+    --badge-text: #633806;
+    --new-badge-bg: #e8f5f0;
+    --new-badge-text: #1d6e52;
+    --arrow-color: #8a8880;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 32px 24px 60px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    font-size: 13px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    border: 1.5px solid;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 28px; height: 2px;
+    flex-shrink: 0;
+  }
+  .legend-sep { color: var(--border-strong); margin: 0 4px; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 36px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  /* CLASS CARD */
+  .card {
+    background: var(--surface);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    min-width: 230px;
+    max-width: 320px;
+    flex: 1 1 230px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card-header {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-stereotype {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+  .card-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .card-desc {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .card-section {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-section:last-child { border-bottom: none; }
+  .card-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 5px;
+  }
+  .field-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 2px 0;
+    font-size: 12px;
+  }
+  .field-name { color: var(--text-primary); font-weight: 500; }
+  .field-type { color: var(--text-tertiary); font-style: italic; }
+  .method-row {
+    font-size: 12px;
+    padding: 2px 0;
+    color: var(--text-primary);
+  }
+  .method-row code {
+    font-family: 'SF Mono', 'Fira Mono', monospace;
+    font-size: 11px;
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  /* CONCURRENCY BADGE */
+  .concurrency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--concurrency-bg);
+    border: 1px solid var(--concurrency-border);
+    color: #7a5a00;
+    border-radius: 5px;
+    padding: 2px 7px;
+    margin-bottom: 6px;
+  }
+  .concurrency-note {
+    font-size: 11.5px;
+    background: var(--concurrency-bg);
+    border: 1px solid var(--concurrency-border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: #5a4200;
+    line-height: 1.5;
+  }
+  .concurrency-note strong {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+    color: #3d2c00;
+  }
+
+  /* TYPE-COLORED HEADERS */
+  .card.enum .card-header    { background: var(--enum-bg);     border-bottom-color: var(--enum-border); }
+  .card.enum .card-name      { color: var(--enum-head); }
+  .card.enum .card-stereotype{ color: var(--enum-head); opacity: 0.7; }
+
+  .card.model .card-header   { background: var(--model-bg);    border-bottom-color: var(--model-border); }
+  .card.model .card-name     { color: var(--model-head); }
+  .card.model .card-stereotype{color: var(--model-head); opacity:0.7;}
+
+  .card.strategy .card-header{ background: var(--strategy-bg); border-bottom-color: var(--strategy-border); }
+  .card.strategy .card-name  { color: var(--strategy-head); }
+  .card.strategy .card-stereotype{color:var(--strategy-head);opacity:0.7;}
+
+  .card.factory .card-header { background: var(--factory-bg);  border-bottom-color: var(--factory-border); }
+  .card.factory .card-name   { color: var(--factory-head); }
+  .card.factory .card-stereotype{color:var(--factory-head);opacity:0.7;}
+
+  .card.repo .card-header    { background: var(--repo-bg);     border-bottom-color: var(--repo-border); }
+  .card.repo .card-name      { color: var(--repo-head); }
+  .card.repo .card-stereotype{color:var(--repo-head);opacity:0.7;}
+
+  .card.service .card-header { background: var(--service-bg);  border-bottom-color: var(--service-border); }
+  .card.service .card-name   { color: var(--service-head); }
+  .card.service .card-stereotype{color:var(--service-head);opacity:0.7;}
+
+  /* NEW badge */
+  .badge-new {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: var(--new-badge-bg);
+    color: var(--new-badge-text);
+    border: 1px solid var(--enum-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* RELATIONSHIPS SECTION */
+  .relationships {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 36px;
+  }
+  .rel-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 14px;
+  }
+  .rel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .rel-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 4px 10px 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rel-table td {
+    padding: 5px 10px 5px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text-secondary);
+  }
+  .rel-table tr:last-child td { border-bottom: none; }
+  .rel-table td:first-child { font-weight: 500; color: var(--text-primary); min-width: 200px; }
+  .rel-table td code {
+    font-family: 'SF Mono','Fira Mono',monospace;
+    font-size: 11px;
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+  .rel-arrow {
+    display: inline-block;
+    margin: 0 6px;
+    color: var(--arrow-color);
+    font-size: 13px;
+  }
+
+  /* STATUS FLOW */
+  .flow-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 36px;
+  }
+  .flow-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .flow-node {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1.5px solid;
+  }
+  .flow-node.available  { background:#e8f5f0; border-color:#2d9e75; color:#1d6e52; }
+  .flow-node.reserved   { background:#fdf3e0; border-color:#ba7517; color:#633806; }
+  .flow-node.rented     { background:#e8f1fb; border-color:#185fa5; color:#042c53; }
+  .flow-node.maintenance{ background:#fceee9; border-color:#993c1d; color:#4a1b0c; }
+  .flow-arrow { color: var(--text-tertiary); font-size: 16px; }
+  .flow-label { font-size: 10px; color: var(--text-tertiary); display:block; text-align:center; margin-top:2px; }
+  .flow-step  { display:flex; flex-direction:column; align-items:center; }
+</style>
+</head>
+<body>
+
+<h1>Car Rental System — Class Diagram</h1>
+<p class="subtitle">Low-level design · In-memory implementation · Thread-safe reservations</p>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--enum-bg);border-color:var(--enum-border)"></div> Enum</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--model-bg);border-color:var(--model-border)"></div> Model</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--strategy-bg);border-color:var(--strategy-border)"></div> Strategy / Interface</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--factory-bg);border-color:var(--factory-border)"></div> Factory</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--repo-bg);border-color:var(--repo-border)"></div> Repository</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--service-bg);border-color:var(--service-border)"></div> Service</div>
+  <span class="legend-sep">|</span>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--concurrency-bg);border-color:var(--concurrency-border)"></div> Concurrency handled</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--new-badge-bg);border-color:var(--enum-border)"></div> New class (added in review)</div>
+</div>
+
+<!-- ═══════════════ ENUMS ═══════════════ -->
+<div class="section">
+  <div class="section-title">Enums</div>
+  <div class="section-grid">
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">VehicleStatus</div>
+        <div class="card-desc">Tracks the physical/operational state of a vehicle.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">AVAILABLE</span></div>
+        <div class="field-row"><span class="field-name">RESERVED</span><span class="field-type">— date-locked, still searchable for other windows</span></div>
+        <div class="field-row"><span class="field-name">RENTED</span><span class="field-type">— physically on road; excluded only via date overlap</span></div>
+        <div class="field-row"><span class="field-name">UNDER_MAINTENANCE</span><span class="field-type">— hard-blocked from search</span></div>
+      </div>
+    </div>
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">ReservationStatus</div>
+        <div class="card-desc">Lifecycle of a booking from initiation to completion.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">INITIATED</span><span class="field-type">— created, payment pending</span></div>
+        <div class="field-row"><span class="field-name">ACTIVE</span><span class="field-type">— payment confirmed</span></div>
+        <div class="field-row"><span class="field-name">CANCELLED</span></div>
+        <div class="field-row"><span class="field-name">COMPLETED</span></div>
+      </div>
+    </div>
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">RentalStatus</div>
+        <div class="card-desc">Tracks whether an active trip is ongoing or finished.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">ACTIVE</span></div>
+        <div class="field-row"><span class="field-name">COMPLETED</span></div>
+      </div>
+    </div>
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">PaymentStatus</div>
+        <div class="card-desc">State machine for a single payment transaction.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">PENDING · SUCCESS · FAILED · REFUNDED</span></div>
+      </div>
+    </div>
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">DamageStatus</div>
+        <div class="card-desc">Indicates whether damage was reported on a rental or vehicle.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">NONE · REPORTED</span></div>
+      </div>
+    </div>
+
+    <div class="card enum">
+      <div class="card-header">
+        <div class="card-stereotype">«enum»</div>
+        <div class="card-name">VehicleCategory</div>
+        <div class="card-desc">Classifies vehicles for filtering and pricing tiers.</div>
+      </div>
+      <div class="card-section">
+        <div class="field-row"><span class="field-name">ECONOMY · SEDAN · SUV · LUXURY</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ MODELS ═══════════════ -->
+<div class="section">
+  <div class="section-title">Models</div>
+  <div class="section-grid">
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Customer</div>
+        <div class="card-desc">Represents a registered customer who can make reservations.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id, name</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">dlNumber, email, phone</span><span class="field-type">String</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Location</div>
+        <div class="card-desc">A physical rental branch; vehicles are assigned to a location.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id, name, address</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">latitude, longitude</span><span class="field-type">double</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">VehiclePricing</div>
+        <div class="card-desc">Encapsulates all pricing rules for a vehicle: daily rate and distance charges.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">dailyRate</span><span class="field-type">BigDecimal</span></div>
+        <div class="field-row"><span class="field-name">freeKmPerDay</span><span class="field-type">int</span></div>
+        <div class="field-row"><span class="field-name">extraKmCharge</span><span class="field-type">BigDecimal</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Vehicle</div>
+        <div class="card-desc">Core domain entity: a rentable car with its category, pricing, and current state.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id, registrationNumber</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">pricing</span><span class="field-type">VehiclePricing</span></div>
+        <div class="field-row"><span class="field-name">category</span><span class="field-type">VehicleCategory</span></div>
+        <div class="field-row"><span class="field-name">status</span><span class="field-type">VehicleStatus</span></div>
+        <div class="field-row"><span class="field-name">currentLocation</span><span class="field-type">Location</span></div>
+        <div class="field-row"><span class="field-name">damageStatus</span><span class="field-type">DamageStatus</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Reservation</div>
+        <div class="card-desc">A date-locked booking linking a customer to a vehicle with an estimated cost.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">customer</span><span class="field-type">Customer</span></div>
+        <div class="field-row"><span class="field-name">vehicle</span><span class="field-type">Vehicle</span></div>
+        <div class="field-row"><span class="field-name">startDate, endDate</span><span class="field-type">LocalDate</span></div>
+        <div class="field-row"><span class="field-name">estimatedCost</span><span class="field-type">BigDecimal</span></div>
+        <div class="field-row"><span class="field-name">status</span><span class="field-type">ReservationStatus</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Rental</div>
+        <div class="card-desc">Represents an active or completed trip; tracks actual km driven and damage.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">reservation</span><span class="field-type">Reservation</span></div>
+        <div class="field-row"><span class="field-name">startTime, endTime</span><span class="field-type">LocalDateTime</span></div>
+        <div class="field-row"><span class="field-name">startKm, endKm</span><span class="field-type">int</span></div>
+        <div class="field-row"><span class="field-name">status</span><span class="field-type">RentalStatus</span></div>
+        <div class="field-row"><span class="field-name">damageStatus</span><span class="field-type">DamageStatus</span></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Payment</div>
+        <div class="card-desc">Records a payment transaction with status transitions for success, failure, or refund.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">paymentId, amount</span></div>
+        <div class="field-row"><span class="field-name">status</span><span class="field-type">PaymentStatus</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>markSuccess() · markFailed() · markRefunded()</code></div>
+      </div>
+    </div>
+
+    <div class="card model">
+      <div class="card-header">
+        <div class="card-stereotype">«model»</div>
+        <div class="card-name">Bill</div>
+        <div class="card-desc">Final invoice generated at rental completion; breaks down base and excess-km charges.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Fields</div>
+        <div class="field-row"><span class="field-name">id</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">rental</span><span class="field-type">Rental</span></div>
+        <div class="field-row"><span class="field-name">baseCharge, distanceCharge, totalCharge</span><span class="field-type">double</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ STRATEGIES & FACTORY ═══════════════ -->
+<div class="section">
+  <div class="section-title">Strategies &amp; Factory</div>
+  <div class="section-grid">
+
+    <div class="card strategy">
+      <div class="card-header">
+        <div class="card-stereotype">«interface»</div>
+        <div class="card-name">PricingStrategy</div>
+        <div class="card-desc">Defines the contract for computing rental cost given a vehicle and date range.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>calculate(vehicle, startDate, endDate) → BigDecimal</code></div>
+      </div>
+    </div>
+
+    <div class="card strategy">
+      <div class="card-header">
+        <div class="card-stereotype">«implements PricingStrategy»</div>
+        <div class="card-name">StandardPricingStrategy</div>
+        <div class="card-desc">Computes cost as dailyRate × days; baseline implementation with a multiplier hook.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>calculate(vehicle, startDate, endDate)</code></div>
+      </div>
+    </div>
+
+    <div class="card strategy">
+      <div class="card-header">
+        <div class="card-stereotype">«interface»</div>
+        <div class="card-name">PaymentStrategy</div>
+        <div class="card-desc">Abstracts payment processing so new providers (UPI, wallet) can be added without changing services.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>processPayment(paymentId, amount) → boolean</code></div>
+      </div>
+    </div>
+
+    <div class="card strategy">
+      <div class="card-header">
+        <div class="card-stereotype">«implements PaymentStrategy»</div>
+        <div class="card-name">CreditCardPaymentStrategy</div>
+        <div class="card-desc">Handles credit-card payment flow; always returns true in the in-memory stub.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>processPayment(paymentId, amount)</code></div>
+      </div>
+    </div>
+
+    <div class="card factory">
+      <div class="card-header">
+        <div class="card-stereotype">«factory»</div>
+        <div class="card-name">PaymentStrategyFactory</div>
+        <div class="card-desc">Returns the correct PaymentStrategy for a given provider string; single extension point for new payment methods.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>«static» getPaymentStrategy(method) → PaymentStrategy</code></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ REPOSITORIES ═══════════════ -->
+<div class="section">
+  <div class="section-title">Repositories</div>
+  <div class="section-grid">
+
+    <div class="card repo">
+      <div class="card-header">
+        <div class="card-stereotype">«repository»</div>
+        <div class="card-name">VehicleRepository</div>
+        <div class="card-desc">Stores vehicles; maintains a secondary location index for fast lookup by branch.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>save(vehicle)</code></div>
+        <div class="method-row"><code>findAllActiveVehiclesByLocation(location)</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-badge">⚡ Thread-safe</div>
+        <div class="concurrency-note">
+          <strong>ConcurrentHashMap + CopyOnWriteArrayList</strong>
+          Primary map is a <code>ConcurrentHashMap&lt;String, Vehicle&gt;</code>. The secondary location index uses <code>CopyOnWriteArrayList</code> per location key — prevents <code>ArrayList.add()</code> race conditions when multiple vehicles are onboarded concurrently.
+        </div>
+      </div>
+    </div>
+
+    <div class="card repo">
+      <div class="card-header">
+        <div class="card-stereotype">«repository»</div>
+        <div class="card-name">ReservationRepository</div>
+        <div class="card-desc">Persists reservations; supports lookup by ID and by vehicle for overlap checking.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>save(reservation)</code></div>
+        <div class="method-row"><code>findById(id)</code></div>
+        <div class="method-row"><code>findByVehicle(vehicleId)</code></div>
+        <div class="method-row"><code>findAll() · delete(id)</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-badge">⚡ Thread-safe</div>
+        <div class="concurrency-note">
+          <strong>ConcurrentHashMap</strong>
+          All reads and writes go through a <code>ConcurrentHashMap</code>. Overlap checks that read this map are always called from inside the per-vehicle <code>ReentrantLock</code> in <code>ReservationService</code>, so the compound read-then-write is also atomic at the service level.
+        </div>
+      </div>
+    </div>
+
+    <div class="card repo">
+      <div class="card-header">
+        <div class="card-stereotype">«repository»</div>
+        <div class="card-name">RentalRepository</div>
+        <div class="card-desc">Stores rental records keyed by rental ID; supports lookup by reservation.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>save(rental)</code></div>
+        <div class="method-row"><code>findById(rentalId)</code></div>
+        <div class="method-row"><code>findByReservationId(id)</code></div>
+        <div class="method-row"><code>findAll()</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-badge">⚡ Thread-safe</div>
+        <div class="concurrency-note">
+          <strong>ConcurrentHashMap (key = rental.getId())</strong>
+          Fixed from the original bug where the key was <code>reservationId</code>. Now keyed on <code>rental.getId()</code>, ensuring correct isolation between rentals.
+        </div>
+      </div>
+    </div>
+
+    <div class="card repo">
+      <div class="card-header">
+        <div class="card-stereotype">«repository»</div>
+        <div class="card-name">PaymentRepository</div>
+        <div class="card-desc">Stores payment records for audit and refund processing.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>save(payment)</code></div>
+        <div class="method-row"><code>findById(paymentId)</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-badge">⚡ Thread-safe</div>
+        <div class="concurrency-note">
+          <strong>ConcurrentHashMap</strong>
+          Independent payment records have no shared mutable state; <code>ConcurrentHashMap</code> is sufficient.
+        </div>
+      </div>
+    </div>
+
+    <div class="card repo">
+      <div class="card-header">
+        <div class="card-stereotype">«repository»</div>
+        <div class="card-name">LocationRepository</div>
+        <div class="card-desc">Stores rental branch locations; typically populated at startup.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>save(location)</code></div>
+        <div class="method-row"><code>findById(id) · findAll()</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-note" style="border-color:var(--border);background:var(--bg);color:var(--text-secondary);">
+          ⚠ Currently uses <code>HashMap</code> — should be upgraded to <code>ConcurrentHashMap</code> for consistency if locations can be added at runtime.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ SERVICES ═══════════════ -->
+<div class="section">
+  <div class="section-title">Services</div>
+  <div class="section-grid">
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">VehicleService</div>
+        <div class="card-desc">Onboards vehicles and provides date-aware search that combines location filtering with overlap checking.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">VehicleRepository, ReservationRepository</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>onboardVehicle(vehicle)</code></div>
+        <div class="method-row"><code>searchVehicles(location, startDate, endDate)</code></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">ReservationService</div>
+        <div class="card-desc">Core booking engine: validates availability, prevents double-booking, and manages reservation lifecycle.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">ReservationRepository, PricingStrategy</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>initiateReservation(customer, vehicle, s, e, amount)</code></div>
+        <div class="method-row"><code>createReservation(reservationId, paymentId)</code></div>
+        <div class="method-row"><code>cancelReservation(reservation, paymentService, payment)</code></div>
+        <div class="method-row"><code>modifyReservation(reservation, newStart, newEnd)</code></div>
+      </div>
+      <div class="card-section">
+        <div class="concurrency-badge">⚡ Concurrency — primary guard</div>
+        <div class="concurrency-note">
+          <strong>Per-vehicle ReentrantLock with 5s timeout</strong>
+          A <code>ConcurrentHashMap&lt;vehicleId, ReentrantLock&gt;</code> provides one lock per vehicle. Both <code>initiateReservation()</code> and <code>modifyReservation()</code> call <code>lock.tryLock(5, SECONDS)</code> before reading the reservation table and mutating vehicle status. The critical section covers: (1) status check, (2) overlap query, (3) vehicle status update to <code>RESERVED</code>, (4) save. This makes the entire check-then-act atomic per vehicle without blocking unrelated vehicles. <code>InterruptedException</code> is handled by restoring the interrupt flag.
+        </div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">RentalService</div>
+        <div class="card-desc">Manages the trip lifecycle: starts rentals on pickup and completes them with odometer and timestamp on return.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">RentalRepository</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>startRental(reservation, startKm) → Rental</code></div>
+        <div class="method-row"><code>completeRental(rental, endKm) → Rental</code></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">BillingService</div>
+        <div class="card-desc">Generates the final bill at rental completion; internally computes excess-km charges using VehiclePricing.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>generateBill(rental, damageFee) → Bill</code></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Logic</div>
+        <div class="field-row"><span class="field-type">excessKm = max(0, totalKm − freeKmPerDay × days)</span></div>
+        <div class="field-row"><span class="field-type">distanceCharge = excessKm × extraKmCharge</span></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">PaymentService</div>
+        <div class="card-desc">Processes payments via the strategy pattern and handles refunds on cancellation.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">PaymentRepository, PaymentStrategyFactory</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>processPayment(amount, provider) → Payment</code></div>
+        <div class="method-row"><code>refund(payment)</code></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">LocationService</div>
+        <div class="card-desc">Thin CRUD wrapper around LocationRepository for managing rental branches.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>addLocation(location)</code></div>
+        <div class="method-row"><code>getLocation(id) · getAllLocations()</code></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">DamageService <span class="badge-new">NEW</span></div>
+        <div class="card-desc">Handles damage reporting on return; transitions vehicle to UNDER_MAINTENANCE and clears it after repairs.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">RentalRepository</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>reportDamage(rental)</code></div>
+        <div class="method-row"><code>clearMaintenance(vehicle)</code></div>
+      </div>
+    </div>
+
+    <div class="card service">
+      <div class="card-header">
+        <div class="card-stereotype">«service»</div>
+        <div class="card-name">PriceComputationService</div>
+        <div class="card-desc">Thin facade over PricingStrategy; allows pre-booking cost estimation before reservation is created.</div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Dependencies</div>
+        <div class="field-row"><span class="field-type">PricingStrategy</span></div>
+      </div>
+      <div class="card-section">
+        <div class="card-section-label">Methods</div>
+        <div class="method-row"><code>computeTotalPrice(vehicle, startDate, endDate)</code></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ RELATIONSHIPS ═══════════════ -->
+<div class="relationships">
+  <div class="rel-title">Key Relationships</div>
+  <table class="rel-table">
+    <thead>
+      <tr>
+        <th>From → To</th>
+        <th>Type</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Vehicle → VehiclePricing</td>
+        <td>Composition</td>
+        <td>Vehicle owns its pricing config; no shared pricing objects</td>
+      </tr>
+      <tr>
+        <td>Vehicle → Location</td>
+        <td>Association</td>
+        <td>currentLocation tracks which branch the car is at</td>
+      </tr>
+      <tr>
+        <td>Reservation → Vehicle, Customer</td>
+        <td>Association</td>
+        <td>Holds live references; vehicle status changes are visible through the reference</td>
+      </tr>
+      <tr>
+        <td>Rental → Reservation</td>
+        <td>Association</td>
+        <td>One-to-one; rental is created only from an ACTIVE reservation</td>
+      </tr>
+      <tr>
+        <td>Bill → Rental</td>
+        <td>Association</td>
+        <td>Bill reads odometer and dates from Rental to compute charges</td>
+      </tr>
+      <tr>
+        <td>StandardPricingStrategy → PricingStrategy</td>
+        <td>Implements</td>
+        <td>Open for extension: add PromoPricingStrategy without touching services</td>
+      </tr>
+      <tr>
+        <td>CreditCardPaymentStrategy → PaymentStrategy</td>
+        <td>Implements</td>
+        <td>UPI, wallet, or net-banking strategies plug in the same way</td>
+      </tr>
+      <tr>
+        <td>ReservationService → ReservationRepository</td>
+        <td>Uses (dependency)</td>
+        <td>Overlap check reads from repo inside the ReentrantLock critical section</td>
+      </tr>
+      <tr>
+        <td>ReservationService → PricingStrategy</td>
+        <td>Uses (dependency)</td>
+        <td>Recomputes price server-side to prevent client-tampered amounts</td>
+      </tr>
+      <tr>
+        <td>PaymentService → PaymentStrategyFactory</td>
+        <td>Uses (dependency)</td>
+        <td>Factory resolves the correct strategy at runtime from the provider string</td>
+      </tr>
+      <tr>
+        <td>VehicleService → VehicleRepository, ReservationRepository</td>
+        <td>Uses (dependency)</td>
+        <td>searchVehicles combines both to return only date-available cars</td>
+      </tr>
+      <tr>
+        <td>DamageService → RentalRepository</td>
+        <td>Uses (dependency)</td>
+        <td>Persists damage flag on rental and mutates vehicle status to UNDER_MAINTENANCE</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ VEHICLE STATUS FLOW ═══════════════ -->
+<div class="flow-box">
+  <div class="rel-title">Vehicle Status Transitions</div>
+  <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:4px;">
+    Status governs operational state. Date-range overlap check (in ReservationRepository) governs search availability independently.
+    A <strong>RENTED</strong> vehicle still appears in search results for non-overlapping future dates.
+  </p>
+  <div class="flow-row">
+    <div class="flow-step">
+      <div class="flow-node available">AVAILABLE</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">initiateReservation()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node reserved">RESERVED</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">startRental()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node rented">RENTED</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">completeRental()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node available">AVAILABLE</div>
+    </div>
+  </div>
+  <div class="flow-row" style="margin-top:10px;">
+    <div class="flow-step">
+      <div class="flow-node rented">RENTED</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">reportDamage()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node maintenance">UNDER_MAINTENANCE</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">clearMaintenance()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node available">AVAILABLE</div>
+    </div>
+  </div>
+  <div class="flow-row" style="margin-top:10px;">
+    <div class="flow-step">
+      <div class="flow-node reserved">RESERVED</div>
+    </div>
+    <div class="flow-step">
+      <span class="flow-arrow">→</span>
+      <span class="flow-label">cancelReservation()</span>
+    </div>
+    <div class="flow-step">
+      <div class="flow-node available">AVAILABLE</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
